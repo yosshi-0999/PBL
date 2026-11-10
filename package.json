@@ -1,0 +1,29 @@
+{
+  "name": "pbl",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev:backend": "npm run dev -w backend",
+    "start:backend": "npm start -w backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yosshi-0999/PBL.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/yosshi-0999/PBL/issues"
+  },
+  "homepage": "https://github.com/yosshi-0999/PBL#readme",
+  "engines": {
+    "node": ">=24"
+  },
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ]
+}
