@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MONO FIT. | Fashion × Schedule × Weather</title>
+<style>
+:root{
+ --bg:#101112;--sidebar:#121314;--panel:#18191b;--panel2:#202124;--line:#303135;
+ --text:#f3f3f4;--muted:#a6a7ac;--soft:#d1d2d5;--accent:#e9e9eb;--radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;font-size:14px}
+button,input,select{font:inherit}
+button{color:inherit;cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:248px;background:var(--sidebar);border-right:1px solid #292a2d;padding:29px 15px 23px;display:flex;flex-direction:column;z-index:10}
+.brand{font-size:27px;letter-spacing:.06em;font-weight:750;padding:2px 10px}
+.tagline{font-size:11px;color:var(--muted);padding:5px 10px 34px;letter-spacing:.03em}
+.nav{display:grid;gap:7px}
+.nav button{border:0;background:transparent;text-align:left;display:flex;align-items:center;gap:15px;padding:13px 14px;border-radius:9px;color:#d0d0d3;font-size:14px;transition:.18s}
+.nav button:hover{background:#202124}
+.nav button.active{background:#292a2d;color:#fff}
+.nav-icon{font-size:20px;width:24px;text-align:center}
+.side-bottom{margin-top:auto;border-top:1px solid #343538;padding:22px 10px 0;color:var(--muted);font-size:12px;line-height:1.9}
+.side-bottom span{display:block;font-size:9px;letter-spacing:.18em;margin-top:13px;color:#6f7075}
+.main{margin-left:248px;min-width:0;width:calc(100% - 248px);padding:31px clamp(24px,3vw,52px) 42px;max-width:1800px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;gap:20px}
+.eyebrow{font-size:10px;letter-spacing:.2em;color:#999ba0;text-transform:uppercase;margin-bottom:9px}
+h1{font-size:29px;line-height:1.25;margin:0 0 8px;font-weight:650;letter-spacing:.015em}
+.page-subtitle{color:var(--muted);font-size:13px}
+.profile-button{border:1px solid #35363a;background:#242528;width:45px;height:45px;border-radius:50%;font-size:20px;flex-shrink:0}
+.page{display:none;animation:fade .2s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:.5;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.grid{display:grid;gap:20px}
+.home-grid{grid-template-columns:minmax(0,1.55fr) minmax(330px,1fr)}
+.stack{display:grid;align-content:start;gap:20px;min-width:0}
+.card{background:var(--panel);border:1px solid #2d2e32;border-radius:var(--radius);padding:22px 24px;min-width:0}
+.card-head{display:flex;align-items:center;gap:12px;font-size:16px;font-weight:650;margin-bottom:20px}
+.card-head .ico{font-size:21px;width:25px;text-align:center;color:#e6e6e8}
+.head-action{margin-left:auto;color:#b9bac0;font-size:11px;font-weight:400}
+.muted{color:var(--muted)}.small{font-size:12px}.tiny{font-size:10px}.divider{height:1px;background:var(--line);margin:17px 0}
+.weather-main{display:flex;align-items:center;gap:20px;padding:0 0 18px}
+.weather-symbol{font-size:64px;width:115px;text-align:center;filter:grayscale(1)}
+.vline{width:1px;height:84px;background:#343539}
+.weather-info{flex:1;min-width:0}
+.temp-row{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin:7px 0}
+.temp{font-size:39px;font-weight:650;letter-spacing:-.04em}
+.weather-advice{border-top:1px solid var(--line);padding:16px 4px 0;display:flex;align-items:center;gap:15px}
+.advice-icon{font-size:27px}
+.weather-advice strong{display:block;font-size:13px;margin-bottom:4px}
+.outfit-feature{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(0,1fr);gap:25px}
+.feature-img{width:100%;height:345px;object-fit:cover;border-radius:9px;background:#292a2c}
+.feature-title{font-size:19px;letter-spacing:.03em;margin:5px 0 9px}
+.feature-sub{color:var(--muted);font-size:13px;margin-bottom:16px}
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:17px}
+.pill{border:1px solid #44454a;border-radius:22px;padding:7px 11px;font-size:11px;color:#d6d6d9}
+.bullets{border-top:1px solid var(--line);padding-top:14px;color:#c9c9cd;line-height:1.9;font-size:12px}
+.bullets strong{display:block;color:#f0f0f1;margin-bottom:4px}
+.bullets ul{margin:0;padding-left:17px}
+.actions{display:flex;justify-content:flex-end;gap:10px;align-items:center;margin-top:17px}
+.ghost-btn,.outline-btn{border:1px solid #4b4c51;background:transparent;border-radius:24px;padding:10px 15px;font-size:11px}
+.heart{font-size:24px;color:#eee}
+.event{display:grid;grid-template-columns:60px 16px minmax(0,1fr);gap:12px;padding:3px 0 21px}
+.event+.event{border-top:1px solid var(--line);padding-top:21px;padding-bottom:3px}
+.event-time{color:#d2d2d6;font-size:14px}
+.timeline{position:relative;display:flex;justify-content:center}
+.timeline:before{content:"";position:absolute;top:4px;bottom:-22px;width:1px;background:#64656a}
+.event:last-child .timeline:before{bottom:0}
+.dot{width:8px;height:8px;border-radius:50%;background:#eee;position:relative;z-index:1}
+.event-title{font-size:14px;margin-bottom:6px}
+.task{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+.check{width:28px;height:28px;border:1px solid #66676d;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.check.checked{background:#d4d4d7;color:#161719;border-color:#d4d4d7}
+.task-name{flex:1;font-size:13px}
+.task.done .task-name{text-decoration:line-through;color:#929398}
+.plus-row{margin-top:17px;padding:12px;border:1px solid #45464b;border-radius:25px;text-align:center;color:#c9c9cd;font-size:12px}
+.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.stat{background:#202124;border:1px solid #303135;border-radius:10px;padding:16px}
+.stat-num{font-size:25px;font-weight:600;margin:7px 0}
+.stat-label{font-size:11px;color:var(--muted)}
+.section-title{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:28px 0 15px}
+.section-title h2{font-size:18px;margin:0;font-weight:600}
+.section-title p{font-size:12px;color:var(--muted);margin:6px 0 0}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid #3b3c40;background:#202124;border-radius:24px;padding:9px 14px;color:#c8c9cd;font-size:12px}
+.chip.active{background:#e6e6e8;color:#17181a;border-color:#e6e6e8}
+.calendar-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.8fr);gap:20px}
+.calendar-card{padding:21px}
+.calendar-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.calendar-top h2{font-size:18px;margin:0}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+.day-head{text-align:center;color:#98999e;font-size:11px;padding:9px 0}
+.day-cell{min-height:91px;background:#202124;border:1px solid #2c2d31;border-radius:8px;padding:9px 8px;font-size:12px;color:#d3d3d6}
+.day-cell.dim{opacity:.36}
+.day-cell.today{border-color:#c6c6cb;background:#292a2e}
+.day-cell .event-tag{display:block;margin-top:9px;border-left:2px solid #b8b9bf;padding:4px 5px;background:#303135;border-radius:2px;font-size:10px;color:#e0e0e2;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.week-list{display:grid;gap:0}
+.week-row{display:grid;grid-template-columns:50px 1fr;gap:13px;padding:14px 0;border-top:1px solid var(--line)}
+.week-row:first-child{border-top:0}
+.week-time{font-size:12px;color:#b8b9be}
+.week-event{border-left:2px solid #bdbec3;padding-left:12px}
+.week-event strong{font-size:13px;font-weight:550;display:block;margin-bottom:5px}
+.week-event span{font-size:11px;color:var(--muted)}
+.progress-line{height:4px;background:#36373b;border-radius:5px;margin-top:10px;overflow:hidden}
+.progress-line span{display:block;width:34%;height:100%;background:#d0d0d4}
+.gallery-toolbar{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:20px}
+.gallery-layout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.look-card{background:var(--panel);border:1px solid #2d2e32;border-radius:12px;overflow:hidden}
+.look-card img{width:100%;height:330px;object-fit:cover;display:block;background:#26272a}
+.look-info{padding:16px 17px 18px}
+.look-name{font-size:15px;letter-spacing:.04em;margin-bottom:7px}
+.look-desc{color:var(--muted);font-size:12px;line-height:1.7}
+.look-meta{display:flex;justify-content:space-between;align-items:center;margin-top:13px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:#c7c8cc}
+.look-wide{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr}
+.look-wide img{height:100%;min-height:320px}
+.look-wide .look-info{align-self:center;padding:24px}
+.look-wide .look-name{font-size:20px}
+.closet-stats{display:flex;gap:12px;flex-wrap:wrap}
+.closet-stat{flex:1;min-width:120px;background:#202124;border:1px solid #303135;border-radius:10px;padding:15px 17px}
+.closet-stat strong{font-size:24px;display:block;margin:7px 0}
+.closet-layout{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.item-card{border:1px solid #2d2e32;border-radius:11px;overflow:hidden;background:var(--panel)}
+.item-img{height:210px;width:100%;object-fit:cover;display:block;background:#252629}
+.item-info{padding:12px 13px 14px}
+.item-name{font-size:13px;margin-bottom:6px}
+.item-detail{font-size:11px;color:var(--muted)}
+.color-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#111;border:1px solid #777;margin-right:5px}
+.profile-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:20px}
+.profile-hero{display:flex;gap:20px;align-items:center;padding:25px}
+.profile-avatar{width:92px;height:92px;border-radius:50%;background:#292a2e;border:1px solid #48494e;display:grid;place-items:center;font-size:37px;flex-shrink:0}
+.profile-name{font-size:21px;margin-bottom:7px}
+.style-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.preference{padding:17px 0;border-top:1px solid var(--line)}
+.preference:first-of-type{border-top:0}
+.preference-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px;font-size:13px}
+.swatches{display:flex;gap:8px;margin-top:10px}
+.swatch{width:29px;height:29px;border-radius:50%;border:1px solid #555}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:16px 0;border-top:1px solid var(--line)}
+.setting-row:first-of-type{border-top:0}
+.setting-row strong{display:block;font-size:13px;margin-bottom:5px}
+.setting-row span{font-size:11px;color:var(--muted)}
+.fake-select{border:1px solid #414247;border-radius:7px;padding:9px 12px;color:#d1d1d5;font-size:12px;white-space:nowrap}
+.footer-note{text-align:center;color:#6e7075;font-size:10px;letter-spacing:.04em;margin-top:28px}
+@media(min-width:1500px){.gallery-layout{grid-template-columns:repeat(4,minmax(0,1fr))}.look-card img{height:350px}.look-wide{grid-column:span 2}.item-img{height:250px}.feature-img{height:390px}}
+@media(max-width:1100px){.sidebar{width:210px}.main{margin-left:210px;width:calc(100% - 210px);padding:26px 22px}.home-grid{grid-template-columns:minmax(0,1.2fr) minmax(285px,1fr)}.outfit-feature{grid-template-columns:minmax(170px,.8fr) 1fr;gap:16px}.feature-img{height:310px}.gallery-layout{grid-template-columns:repeat(2,minmax(0,1fr))}.closet-layout{grid-template-columns:repeat(3,minmax(0,1fr))}.calendar-layout{grid-template-columns:1fr}.week-list{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px}}
+@media(max-width:760px){.sidebar{position:relative;width:100%;height:auto;padding:14px;display:block;border-right:0;border-bottom:1px solid #292a2d}.brand{font-size:22px}.tagline{padding:3px 10px 12px}.nav{display:flex;overflow-x:auto;gap:5px}.nav button{white-space:nowrap;padding:10px 12px;font-size:12px;gap:7px}.nav-icon{font-size:17px;width:auto}.side-bottom{display:none}.app{display:block}.main{margin:0;width:100%;padding:22px 14px}.topbar{margin-bottom:20px}h1{font-size:24px}.home-grid,.profile-layout{grid-template-columns:1fr}.calendar-layout{grid-template-columns:1fr}.calendar-grid{gap:4px}.day-cell{min-height:66px;padding:5px;font-size:10px}.day-cell .event-tag{font-size:8px;padding:3px}.gallery-layout{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.look-card img{height:230px}.look-wide{grid-column:span 2}.look-wide img{height:100%;min-height:250px}.closet-layout{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.item-img{height:180px}.outfit-feature{grid-template-columns:minmax(130px,.8fr) 1fr}.feature-img{height:250px}.card{padding:17px}.stat-row{gap:8px}.stat{padding:12px}.stat-num{font-size:21px}}
+@media(max-width:450px){.nav button{padding:9px}.nav-icon{display:none}.outfit-feature{grid-template-columns:1fr}.feature-img{height:330px}.gallery-layout{grid-template-columns:1fr}.look-wide{grid-column:auto;display:block}.look-wide img{height:270px;min-height:0}.look-wide .look-info{padding:16px}.closet-layout{grid-template-columns:repeat(2,minmax(0,1fr))}.item-img{height:150px}.calendar-grid{gap:3px}.day-cell{min-height:57px}.day-cell .event-tag{display:none}.weather-symbol{width:65px;font-size:48px}.vline{height:70px}.temp{font-size:32px}.profile-hero{padding:18px;gap:13px}.profile-avatar{width:68px;height:68px}.profile-name{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="brand">MONO FIT.</div>
+ <div class="tagline"></div>
+ <nav class="nav" aria-label="メインメニュー">
+  <button class="active" data-page="home"><span class="nav-icon">⌂</span>ホーム</button>
+  <button data-page="schedule"><span class="nav-icon">▦</span>予定・タスク</button>
+  <button data-page="outfits"><span class="nav-icon">♧</span>コーデ</button>
+  <button data-page="closet"><span class="nav-icon">♧</span>クローゼット</button>
+ </nav>
+ <div class="side-bottom">自分らしい毎日を、<br>もっとおしゃれに。<span>STYLE YOUR EVERYDAY.</span></div>
+</aside>
+<main class="main">
+<header class="topbar">
+ <div><div class="eyebrow">MONO FIT. / YOUR DAILY STYLE</div><h1 id="page-title">おはようございます</h1><div class="page-subtitle" id="page-subtitle">2026年10月21日 水曜日 — 今日も、自分らしいスタイルで。</div></div>
+ <button class="profile-button" data-page="profile" aria-label="プロフィール">♙</button>
+</header>
+
+<!-- HOME -->
+<section class="page active" id="page-home">
+ <div class="grid home-grid">
+  <div class="stack">
+   <section class="card">
+    <div class="card-head"><span class="ico">☼</span>今日の天気 <span class="head-action">FUKUOKA, JP</span></div>
+    <div class="weather-main"><div class="weather-symbol">☁</div><div class="vline"></div><div class="weather-info"><div class="small">📍 福岡市</div><div class="temp-row"><div class="temp">18°C</div><div class="small muted">最高 20° / 最低 12°</div></div><div class="small muted">くもり　・　降水確率 30%</div></div></div>
+    <div class="weather-advice"><div class="advice-icon">♧</div><div><strong>服装のアドバイス</strong><span class="small muted">薄手のアウターがちょうどいい一日。</span></div></div>
+   </section>
+   <section class="card">
+    <div class="card-head"><span class="ico">♧</span>今日のコーディネート <span class="head-action">DAILY LOOK / 01</span></div>
+    <div class="outfit-feature">
+     <img class="feature-img" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=85" alt="モノトーンのファッションイメージ">
+     <div><div class="eyebrow">THE DAILY EDIT</div><div class="feature-title">MONOCHROME LOOK</div><div class="feature-sub">大学・普段のお出かけ向け</div><div class="pills"><span class="pill">動きやすさ ◎</span><span class="pill">気温に対応</span></div><div class="bullets"><strong>コーデのポイント</strong><ul><li>ジャケットで大人っぽく、Tシャツでカジュアルに。</li><li>気温に合わせてインナーで調整。</li><li>シンプルな色合わせで幅広いシーンに。</li></ul></div><div class="actions"><span class="heart">♡</span><button class="outline-btn" data-page="outfits">コーデを見る →</button></div></div>
+    </div>
+   </section>
+  </div>
+  <div class="stack">
+   <section class="card">
+    <div class="card-head"><span class="ico">▦</span>今日の予定 <button class="head-action" data-page="schedule" style="border:0;background:none">すべて見る →</button></div>
+    <div class="event"><div class="event-time">09:00</div><div class="timeline"><span class="dot"></span></div><div><div class="event-title">大学の授業</div><div class="small muted">情報工学・動きやすい服装</div></div></div>
+    <div class="event"><div class="event-time">18:00</div><div class="timeline"><span class="dot"></span></div><div><div class="event-title">アルバイト</div><div class="small muted">着替え・持ち物を確認</div></div></div>
+   </section>
+   <section class="card">
+    <div class="card-head"><span class="ico">☑</span>今日のタスク <span class="head-action">1 / 3 完了</span></div>
+    <div class="task done"><div class="check checked">✓</div><div class="task-name">レポートを提出する</div><span class="muted">›</span></div>
+    <div class="task"><div class="check"></div><div class="task-name">明日の服を準備する</div><span class="muted">›</span></div>
+    <div class="task"><div class="check"></div><div class="task-name">バイトの持ち物を確認</div><span class="muted">›</span></div>
+    <button class="plus-row" data-page="schedule" style="width:100%">タスク一覧を見る　＋</button>
+   </section>
+   <section class="card">
+    <div class="card-head"><span class="ico">◈</span>MY CLOSET <span class="head-action" data-page="closet">クローゼット →</span></div>
+    <div class="stat-row"><div class="stat"><div class="stat-label">登録アイテム</div><div class="stat-num">24</div><div class="stat-label">ITEMS</div></div><div class="stat"><div class="stat-label">お気に入り</div><div class="stat-num">08</div><div class="stat-label">FAVORITES</div></div><div class="stat"><div class="stat-label">よく着る色</div><div class="stat-num">B/W</div><div class="stat-label">MONOCHROME</div></div></div>
+   </section>
+  </div>
+ </div>
+</section>
+
+<!-- SCHEDULE -->
+<section class="page" id="page-schedule">
+ <div class="stat-row" style="margin-bottom:22px">
+  <div class="stat"><div class="stat-label">今日の予定</div><div class="stat-num">02</div><div class="stat-label">SCHEDULED</div></div>
+  <div class="stat"><div class="stat-label">今日のタスク</div><div class="stat-num">03</div><div class="stat-label">TASKS</div></div>
+  <div class="stat"><div class="stat-label">完了したタスク</div><div class="stat-num">01</div><div class="stat-label">COMPLETED</div><div class="progress-line"><span></span></div></div>
+ </div>
+ <div class="section-title"><div><h2>スケジュール</h2><p>予定を見渡して、余裕のある一日を。</p></div><div class="toolbar"><button class="chip">‹ 前の週</button><button class="chip active">今週</button><button class="chip">次の週 ›</button></div></div>
+ <div class="calendar-layout">
+  <section class="card calendar-card">
+   <div class="calendar-top"><h2>2026年 10月</h2><span class="small muted">WEEK 43</span></div>
+   <div class="calendar-grid">
+    <div class="day-head">月</div><div class="day-head">火</div><div class="day-head">水</div><div class="day-head">木</div><div class="day-head">金</div><div class="day-head">土</div><div class="day-head">日</div>
+    <div class="day-cell dim">28</div><div class="day-cell dim">29</div><div class="day-cell dim">30</div><div class="day-cell">1</div><div class="day-cell">2</div><div class="day-cell">3</div><div class="day-cell">4</div>
+    <div class="day-cell">5</div><div class="day-cell">6</div><div class="day-cell">7</div><div class="day-cell">8</div><div class="day-cell">9</div><div class="day-cell">10</div><div class="day-cell">11</div>
+    <div class="day-cell">12</div><div class="day-cell">13</div><div class="day-cell">14</div><div class="day-cell">15</div><div class="day-cell">16</div><div class="day-cell">17</div><div class="day-cell">18</div>
+    <div class="day-cell">19</div><div class="day-cell">20</div><div class="day-cell today">21<span class="event-tag">09:00 授業</span><span class="event-tag">18:00 バイト</span></div><div class="day-cell">22<span class="event-tag">課題提出</span></div><div class="day-cell">23</div><div class="day-cell">24</div><div class="day-cell">25</div>
+    <div class="day-cell">26</div><div class="day-cell">27</div><div class="day-cell">28</div><div class="day-cell">29</div><div class="day-cell">30</div><div class="day-cell">31</div><div class="day-cell dim">1</div>
+   </div>
+   <div class="divider"></div><div class="small muted">※ カレンダーはデザイン確認用のサンプルです。</div>
+  </section>
+  <div class="stack">
+   <section class="card"><div class="card-head"><span class="ico">◷</span>10月21日（水）<span class="head-action">TODAY</span></div>
+    <div class="week-list"><div class="week-row"><div class="week-time">09:00</div><div class="week-event"><strong>大学の授業</strong><span>情報工学・教室で受講</span></div></div><div class="week-row"><div class="week-time">18:00</div><div class="week-event"><strong>アルバイト</strong><span>着替え・持ち物を確認</span></div></div></div>
+   </section>
+   <section class="card"><div class="card-head"><span class="ico">☑</span>タスクリスト <span class="head-action">1 / 3 DONE</span></div>
+    <div class="task done"><div class="check checked">✓</div><div class="task-name">レポートを提出する<div class="tiny muted" style="margin-top:5px">今日まで</div></div></div>
+    <div class="task"><div class="check"></div><div class="task-name">明日の服を準備する<div class="tiny muted" style="margin-top:5px">今日中</div></div></div>
+    <div class="task"><div class="check"></div><div class="task-name">バイトの持ち物を確認<div class="tiny muted" style="margin-top:5px">出勤前</div></div></div>
+    <div class="plus-row">＋　タスクを追加する</div>
+   </section>
+  </div>
+ </div>
+</section>
+
+<!-- OUTFITS -->
+<section class="page" id="page-outfits">
+ <section class="card" style="margin-bottom:22px;padding:0;overflow:hidden">
+  <div class="outfit-feature" style="grid-template-columns:1fr 1fr;gap:0">
+   <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85" alt="今日のスタイル" style="width:100%;height:355px;object-fit:cover">
+   <div style="padding:clamp(22px,3vw,44px);align-self:center"><div class="eyebrow">EDITOR'S PICK / 01</div><div style="font-size:27px;letter-spacing:.04em;margin:10px 0">THE MONOCHROME EDIT</div><p class="muted" style="line-height:1.9;font-size:13px">ミニマルな色使いと、シルエットでつくる大人のデイリースタイル。</p><div class="pills" style="margin-top:18px"><span class="pill">DAILY</span><span class="pill">MONOCHROME</span><span class="pill">18°C</span></div><div class="small muted">おすすめシーン：大学・街歩き・カフェ</div></div>
+  </div>
+ </section>
+ <div class="gallery-toolbar"><div><div class="section-title" style="margin:0"><div><h2>コーディネートを探す</h2><p>気分やシーンに合わせて、今日の一着を。</p></div></div></div><div class="toolbar"><button class="chip active">すべて</button><button class="chip">カジュアル</button><button class="chip">きれいめ</button><button class="chip">ストリート</button><button class="chip">通学</button></div></div>
+ <div class="gallery-layout">
+  <article class="look-card"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=700&q=85" alt="モノトーンの着こなし"><div class="look-info"><div class="look-name">01 / MONOCHROME</div><div class="look-desc">黒のジャケットに白のインナー。すっきりした大人の定番スタイル。</div><div class="look-meta"><span>DAILY · 15–20°C</span><span>♡</span></div></div></article>
+  <article class="look-card"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=700&q=85" alt="きれいめファッション"><div class="look-info"><div class="look-name">02 / CITY CHIC</div><div class="look-desc">シルエットを楽しむ、落ち着いた街歩きコーデ。</div><div class="look-meta"><span>CITY · 15–22°C</span><span>♡</span></div></div></article>
+  <article class="look-card"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=700&q=85" alt="ミニマルなコーデ"><div class="look-info"><div class="look-name">03 / MINIMAL</div><div class="look-desc">無彩色を重ねて、シンプルながら印象的に。</div><div class="look-meta"><span>MINIMAL · 12–18°C</span><span>♡</span></div></div></article>
+  <article class="look-card"><img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=700&q=85" alt="カジュアルスタイル"><div class="look-info"><div class="look-name">04 / SOFT CASUAL</div><div class="look-desc">リラックス感ときちんと感を両立したスタイル。</div><div class="look-meta"><span>CASUAL · 18–24°C</span><span>♡</span></div></div></article>
+  <article class="look-card look-wide"><img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=900&q=85" alt="シーズンスタイル"><div class="look-info"><div class="eyebrow">SEASONAL COLLECTION</div><div class="look-name">05 / LAYERED ESSENTIALS</div><div class="look-desc">気温差のある季節に。軽いアウターを中心にしたレイヤードスタイル。</div><div class="pills" style="margin-top:15px"><span class="pill">LAYERING</span><span class="pill">AUTUMN</span></div><div class="look-meta"><span>WEEKEND · 12–20°C</span><span>♡　お気に入り</span></div></div></article>
+ </div>
+</section>
+
+<!-- CLOSET -->
+<section class="page" id="page-closet">
+ <div class="closet-stats" style="margin-bottom:24px"><div class="closet-stat"><div class="small muted">TOTAL ITEMS</div><strong>24</strong><div class="tiny muted">登録アイテム</div></div><div class="closet-stat"><div class="small muted">FAVORITES</div><strong>08</strong><div class="tiny muted">お気に入り</div></div><div class="closet-stat"><div class="small muted">MOST WORN</div><strong>BLACK</strong><div class="tiny muted">よく着るカラー</div></div><div class="closet-stat"><div class="small muted">THIS SEASON</div><strong>12</strong><div class="tiny muted">秋冬アイテム</div></div></div>
+ <div class="section-title"><div><h2>MY CLOSET</h2><p>持っている服を、ひと目で見渡す。</p></div><div class="toolbar"><button class="chip active">すべて 24</button><button class="chip">トップス 08</button><button class="chip">ボトムス 05</button><button class="chip">アウター 04</button><button class="chip">靴・小物 07</button></div></div>
+ <div class="gallery-toolbar"><div class="small muted">ALL ITEMS　/　SEASON: AUTUMN & WINTER</div><div class="toolbar"><button class="chip">カラーで見る⌄</button><button class="chip">並び替え⌄</button></div></div>
+ <div class="closet-layout">
+  <article class="item-card"><img class="item-img" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=600&q=85" alt="黒いアウター"><div class="item-info"><div class="item-name">オーバーサイズジャケット</div><div class="item-detail"><span class="color-dot"></span>BLACK　·　アウター</div></div></article>
+  <article class="item-card"><img class="item-img" src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=85" alt="白いTシャツ"><div class="item-info"><div class="item-name">ベーシックTシャツ</div><div class="item-detail"><span class="color-dot" style="background:#eee"></span>WHITE　·　トップス</div></div></article>
+  <article class="item-card"><img class="item-img" src="https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=600&q=85" alt="デニムパンツ"><div class="item-info"><div class="item-name">ストレートデニム</div><div class="item-detail"><span class="color-dot" style="background:#323d4e"></span>INDIGO　·　ボトムス</div></div></article>
+  <article class="item-card"><img class="item-img" src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=600&q=85" alt="シューズ"><div class="item-info"><div class="item-name">ミニマルシューズ</div><div class="item-detail"><span class="color-dot" style="background:#ddd"></span>IVORY　·　靴</div></div></article>
+  <article class="item-card"><img class="item-img" src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=85" alt="レザージャケット"><div class="item-info"><div class="item-name">フェイクレザーブルゾン</div><div class="item-detail"><span class="color-dot"></span>BLACK　·　アウター</div></div></article>
+  <article class="item-card"><img class="item-img" src="https://images.unsplash.com/photo-1583743814966-8936f37f4678?auto=format&fit=crop&w=600&q=85" alt="ダークカラーのトップス"><div class="item-info"><div class="item-name">リラックスフィットT</div><div class="item-detail"><span class="color-dot"></span>CHARCOAL　·　トップス</div></div></article>
+  <article class="item-card"><img class="item-img" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=85" alt="ファッションスタイリング"><div class="item-info"><div class="item-name">お気に入りスタイル</div><div class="item-detail"><span class="color-dot" style="background:#888"></span>GREY　·　セット</div></div></article>
+  <article class="item-card"><img class="item-img" src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=600&q=85" alt="秋のファッション"><div class="item-info"><div class="item-name">秋のレイヤード</div><div class="item-detail"><span class="color-dot"></span>MONO　·　セット</div></div></article>
+ </div>
+</section>
+
+<!-- PROFILE -->
+<section class="page" id="page-profile">
+ <div class="profile-layout">
+  <div class="stack">
+   <section class="card profile-hero"><div class="profile-avatar">♙</div><div><div class="eyebrow">YOUR STYLE PROFILE</div><div class="profile-name">MY STYLE</div><div class="small muted">自分らしいスタイルを見つけよう。</div><div class="style-tags"><span class="pill">MINIMAL</span><span class="pill">MONOCHROME</span><span class="pill">CASUAL</span></div></div></section>
+   <section class="card"><div class="card-head"><span class="ico">◈</span>ファッションの好み</div>
+    <div class="preference"><div class="preference-head"><strong>好きなテイスト</strong><span class="muted">STYLE</span></div><div class="style-tags"><span class="pill">シンプル</span><span class="pill">きれいめ</span><span class="pill">モノトーン</span><span class="pill">カジュアル</span></div></div>
+    <div class="preference"><div class="preference-head"><strong>好きなカラー</strong><span class="muted">COLOR PALETTE</span></div><div class="swatches"><span class="swatch" style="background:#111"></span><span class="swatch" style="background:#e8e7e3"></span><span class="swatch" style="background:#77787b"></span><span class="swatch" style="background:#b9afa2"></span><span class="swatch" style="background:#454b53"></span></div></div>
+    <div class="preference"><div class="preference-head"><strong>よく着るシーン</strong><span class="muted">OCCASION</span></div><div class="style-tags"><span class="pill">大学・通学</span><span class="pill">お出かけ</span><span class="pill">カフェ</span></div></div>
+   </section>
+  </div>
+  <div class="stack">
+   <section class="card"><div class="card-head"><span class="ico">◎</span>コーデ提案の設定</div>
+    <div class="setting-row"><div><strong>ファッションの方向性</strong><span>提案に反映するスタイル</span></div><div class="fake-select">シンプル・大人っぽい⌄</div></div>
+    <div class="setting-row"><div><strong>よく着るカラー</strong><span>コーデの色合い</span></div><div class="fake-select">モノトーン⌄</div></div>
+    <div class="setting-row"><div><strong>重視したいポイント</strong><span>着心地やデザインの好み</span></div><div class="fake-select">動きやすさ⌄</div></div>
+    <div class="setting-row"><div><strong>表示テーマ</strong><span>アプリ全体の見た目</span></div><div class="fake-select">ダーク⌄</div></div>
+   </section>
+   <section class="card"><div class="card-head"><span class="ico">✧</span>ABOUT MONO FIT.</div><p class="muted" style="line-height:1.9;font-size:13px">今日の天気と予定に合わせて、自分らしい服を選ぶ。MONO FIT. は、毎日のスタイルを心地よく整えるためのファッション・ライフスタイルアプリです。</p><div class="divider"></div><div class="small muted">DESIGN PREVIEW　·　VERSION 0.1</div></section>
+  </div>
+ </div>
+</section>
+<div class="footer-note">MONO FIT.　—　DESIGN PROTOTYPE / SAMPLE CONTENT</div>
+</main>
+</div>
+<script>
+const meta={
+ home:["おはようございます","2026年10月21日 水曜日 — 今日も、自分らしいスタイルで。","HOME / DAILY DASHBOARD"],
+ schedule:["予定・タスク","予定を整理して、毎日に少しの余裕を。","SCHEDULE / PLAN YOUR DAY"],
+ outfits:["コーディネート","気温と気分に合わせて、自分らしい一着を。","OUTFITS / THE DAILY EDIT"],
+ closet:["クローゼット","手持ちの服を整理して、新しい組み合わせを見つける。","CLOSET / YOUR WARDROBE"],
+ profile:["プロフィール","あなたの好みを反映したスタイル設定。","PROFILE / YOUR STYLE"]
+};
+function showPage(name){
+ document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));
+ document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===name && b.classList.contains('nav-item')));
+ const m=meta[name]||meta.home;
+ document.getElementById('page-title').textContent=m[0];
+ document.getElementById('page-subtitle').textContent=m[1];
+ document.querySelector('.eyebrow').textContent='MONO FIT. / '+m[2];
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',()=>showPage(el.dataset.page)));
+</script>
+</body>
+</html>
