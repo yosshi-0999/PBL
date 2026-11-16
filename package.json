@@ -4,7 +4,11 @@
   "description": "",
   "scripts": {
     "dev:backend": "npm run dev -w backend",
-    "start:backend": "npm start -w backend"
+    "start:backend": "npm start -w backend",
+    "dev:frontend": "npm run dev -w frontend",
+    "build:frontend": "npm run build -w frontend",
+    "start:frontend": "npm start -w frontend",
+    "lint": "npm run lint -w frontend"
   },
   "repository": {
     "type": "git",
